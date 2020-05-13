@@ -32,7 +32,7 @@ yarn add webpack webpack-cli webpack-dev-server webpack-merge html-webpack-plugi
 
 - css-loader：负责解析 css 中的@import 语法
 - style-loader：将 css 转为 js 的可执行模式，形成内链模式
-- mini-css-extract-plugin：将 css 抽离成一个文件，形成外链模式，与 style-loader 互斥
+- mini-css-extract-plugin：将 css 抽离成一个文件，形成外链模式，与 style-loader 互斥（默认未开启hmr功能，需要配置）
 - optimize-css-assets-webpack-plugin：配合 mini-css-extract-plugin，进行 css 的代码压缩（需要在 optimization 中配置，一旦配置，webpack 对 js 默认的压缩就会失去作用，需要手动对 js 进行压缩->uglifyjs-webpack-plugin）
 - postcss-loader + autoprefixer：用于自动添加浏览器前缀（1.要在 css-loader 之前使用，2.在 postcss-loader 使用 autoprefixer 插件，3.需要设置.browserslistrc 文件，或者在 package.json 中配置 browserslist 字段）
 
@@ -142,4 +142,28 @@ yarn add less less-loader -D
 ```
 
 17. 懒加载：代码中，使用 import()语法（本质是 jsonp，返回值为 promise，返回值为 default 形式），打包时使用@babel/plugin-syntax-dynamic-import 进行解析
-18. 热更新：devServer 中配置 hot，plugins 中使用 webpack 的内置模块，webpack.HotModuleReplacementPlugin,且此时可以在代码中获取 module 变量
+18. 热更新：
+    1）devServer 中配置 hot，
+    2）plugins 中使用 webpack 的内置模块，webpack.HotModuleReplacementPlugin
+    3）入口文件中添加：`if (module.hot) {module.hot.accept()}`
+19. 集成 ts
+
+- yarn add typescript（tslint）
+- tsc --init
+- 笔记
+
+> let v:void;//void 类型的值可以是 undefined（非严格模式时也可赋值 null）
+> let a = ():never=>{}//当函数抛出错误或者死循环时，返回值类型为 never
+> (a as string) = '';//类型断言，或者，(<string> a) = ''
+> 函数重载
+> 泛型：使多个变量保持为一种类型（泛型约束：使用<T extends 某种类型>）
+> keyof：某个类型的所有 key 的集合
+> es6 的类只有静态方法，没有静态属性，不支持私有属性和方法
+> super 作为对象时，在在普通方法中代表父类的原型对象，在静态方法中，代表父类
+> protected：修饰方法可以访问，属性则不可以，修饰 constructor 的时候，标识该类只能被继承不能被实例化
+> ts 中，构造函数参数被修饰符修饰之后，会变为实例的属性
+> 类型保护：typeof instanceof
+
+20. NODE_ENV 问题
+    1）通过 mode 定义或者 definePlugin 定义，process.env.NODE_EVN 只可以在页面中获取到（因为页面中没有 process 全局变量，所以在编译阶段就将 process.env.NODE_EVN 替换为具体 mode 值或者 definePlugin 中定义的 process.env.NODE_ENV 属性，而不是替换为 node 进程中 process.env.NODE_ENV 这个变量），在 config 中无法获取到
+    2）通过'NODE_ENV=production webpack --config webpack.config.prod.js'这种形式定义，可以在 config 中获取到，但是在页面环境获取不到，同时为了兼容 windows 需要使用 cross-env 来定义

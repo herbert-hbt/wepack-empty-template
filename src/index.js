@@ -1,4 +1,4 @@
-import "./index.css";
+require("./index.css");
 import "./index.less";
 // var a = function(){
 //     console.log("执行成功dddd");
@@ -24,3 +24,8 @@ function a() {
 //     console.log(88)
 // }
 a();
+if (module.hot) {
+  module.hot.accept()
+}
+// debugger
+// console.log('-----',process.env.NODE_ENV)

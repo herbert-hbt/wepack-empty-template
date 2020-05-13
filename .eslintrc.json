@@ -21,6 +21,7 @@
         // "array-bracket-newline": 2,
         "eqeqeq": 2,
         "comma-dangle": 0,
-        "indent": ["error", 2]
+        "indent": ["error", 2],
+        "no-debugger": "off"
     }
 }

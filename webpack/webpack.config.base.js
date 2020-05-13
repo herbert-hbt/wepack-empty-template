@@ -82,8 +82,13 @@ module.exports = {
       {
         test: /\.less$/,
         use: [
-          // 'style-loader',
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: process.env.NODE_ENV === "development",
+              reloadAll: true,
+            },
+          },
           "css-loader",
           {
             loader: "postcss-loader",
